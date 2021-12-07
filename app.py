@@ -1,9 +1,6 @@
 from flask import Flask, render_template, request,jsonify
 from flask_cors import CORS,cross_origin
-from sklearn.preprocessing import StandardScaler
-from sklearn import datasets
 import pickle
-import pandas as pd
 
 
 app = Flask(__name__)
