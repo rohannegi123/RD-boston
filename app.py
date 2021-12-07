@@ -1,10 +1,16 @@
 from flask import Flask, render_template, request,jsonify
 from flask_cors import CORS,cross_origin
-
-
+from sklearn.preprocessing import StandardScaler
+from sklearn import datasets
 import pickle
-app = Flask(__name__)
+import pandas as pd
 
+
+app = Flask(__name__)
+boston = datasets.load_boston()
+features = pd.DataFrame(boston.data,columns=boston.feature_names)
+sd_sc = StandardScaler()
+sd_sc.fit_transform(features)
 @app.route('/' , methods =['GET'])
 @cross_origin()
 def homepage():
@@ -31,7 +37,7 @@ def Prediction():
 
             filename = 'Rd-assign.pickle'
             load_model = pickle.load(open(filename, 'rb'))
-            prediction = load_model.predict([[CRIM,ZN,INDUS,CHAS,NOX,RM,AGE,DIS,RAD,TAX,PTRATIO,B,LSTAT]])
+            prediction = load_model.predict(sd_sc.transform([[CRIM,ZN,INDUS,CHAS,NOX,RM,AGE,DIS,RAD,TAX,PTRATIO,B,LSTAT]]))
             return render_template('results.html', prediction=round(prediction[0]))
         except Exception as e:
             print('the exception msg is : ' , e)
