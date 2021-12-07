@@ -7,10 +7,7 @@ import pandas as pd
 
 
 app = Flask(__name__)
-boston = datasets.load_boston()
-features = pd.DataFrame(boston.data,columns=boston.feature_names)
-sd_sc = StandardScaler()
-sd_sc.fit_transform(features)
+
 @app.route('/' , methods =['GET'])
 @cross_origin()
 def homepage():
@@ -37,7 +34,9 @@ def Prediction():
 
             filename = 'Rd-assign.pickle'
             load_model = pickle.load(open(filename, 'rb'))
-            prediction = load_model.predict(sd_sc.transform([[CRIM,ZN,INDUS,CHAS,NOX,RM,AGE,DIS,RAD,TAX,PTRATIO,B,LSTAT]]))
+            standfile = 'sd_sc_rd'
+            Stand = pickle.load(open(standfile,'rb'))
+            prediction = load_model.predict(Stand.transform([[CRIM,ZN,INDUS,CHAS,NOX,RM,AGE,DIS,RAD,TAX,PTRATIO,B,LSTAT]]))
             return render_template('results.html', prediction=round(prediction[0]))
         except Exception as e:
             print('the exception msg is : ' , e)
